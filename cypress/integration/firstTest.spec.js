@@ -117,7 +117,7 @@ describe('Our first suite', () => {
 
   });
 
-  it.only('assert property', () => {
+  it('assert property', () => {
     cy.visit('/');
     cy.contains('Forms').click();
     cy.contains('Datepicker').click();
@@ -131,6 +131,44 @@ describe('Our first suite', () => {
       });
 
   });
+
+  it('radio button', () => {
+    cy.visit('/');
+    cy.contains('Forms').click();
+    cy.contains('Form Layouts').click();
+
+    cy.contains('nb-card', 'Using the Grid').find('[type=radio]')
+      .then(radioButton => {
+        cy.wrap(radioButton)
+          .first()
+          .check({force: true})
+          .should('be.checked')
+
+        cy.wrap(radioButton)
+          .eq(1)  //index
+          .check({force: true})
+
+        cy.wrap(radioButton)
+          .first()
+          .should('not.be.checked')
+
+        cy.wrap(radioButton)
+          .eq(2)
+          .should('be.disabled')
+      })
+  })
+
+  it('check box', () => {
+    cy.visit('/');
+    cy.contains('Modal & Overlays').click();
+    cy.contains('Toastr').click();
+
+    cy.get('[type=checkbox]').check({force: true});
+    cy.get('[type=checkbox]').eq(0).click({force: true});
+    cy.get('[type=checkbox]').eq(1).check({force: true})
+
+  })
+
 
 });
 
