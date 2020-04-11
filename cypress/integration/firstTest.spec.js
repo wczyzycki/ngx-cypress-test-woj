@@ -178,6 +178,8 @@ describe('Our first suite', () => {
     // cy.get('nav nb-select').should('contain', 'Dark');
     // cy.get('nb-layout-header nav').should('have.css', 'background-color', 'rgb(34, 43, 69)');
 
+
+    //2
     cy.get('nav nb-select').then(dropdown => {
       cy.wrap(dropdown).click()
       cy.get('ul.options-list nb-option').each((listItem, index) => {
@@ -199,6 +201,68 @@ describe('Our first suite', () => {
       })
     });
 
+  });
+
+  it('View tables', () => {
+    cy.visit('/');
+    cy.contains('Tables & Data').click();
+    cy.contains('Smart Table').click();
+
+    cy.get('tbody').contains('tr', 'Larry').then(tableRow => {
+      cy.wrap(tableRow).find('.nb-edit').click();
+      cy.wrap(tableRow).find('[placeholder=Age]').clear().type('25');
+      cy.wrap(tableRow).find('.nb-checkmark').click();
+      cy.wrap(tableRow).find('td').eq(6).should('contain', '25');
+
+    })
+  });
+
+  it('Add row', () => {
+    cy.visit('/');
+    cy.contains('Tables & Data').click();
+    cy.contains('Smart Table').click();
+
+    cy.get('thead').find('.nb-plus').click();
+    cy.get('thead').find('tr').eq(2).then(tableRow => {
+      cy.wrap(tableRow).find('[placeholder="First Name"]').type('Woj');
+      cy.wrap(tableRow).find('[placeholder="Last Name"]').type('Cz');
+      cy.wrap(tableRow).find('.nb-checkmark').click();
+    });
+
+    cy.get('tbody tr').first().find('td').then(tableColumns => {
+      cy.wrap(tableColumns).eq(2).should('contain', 'Woj');
+      cy.wrap(tableColumns).eq(3).should('contain', 'Cz');
+    })
+
+  });
+
+  it('Check rows', () => {
+    cy.visit('/');
+    cy.contains('Tables & Data').click();
+    cy.contains('Smart Table').click();
+
+    // cy.get('thead [placeholder=Age]').type('20')
+    // cy.wait(500)
+    // cy.get('tbody tr').each(tableRow => {
+    //   cy.wrap(tableRow).find('td').eq(6).should('contain', '20')
+    // })
+
+
+    const age = [20, 30, 40, 200];
+
+    cy.wrap(age).each(age => {
+      cy.get('thead [placeholder=Age]').clear().type(age);
+      cy.wait(500);
+
+      cy.get('tbody tr').each(tableRow => {
+        if (age === 200) {
+          cy.wrap(tableRow).should('contain', 'No data found')
+        } else {
+          cy.wrap(tableRow).find('td').eq(6).should('contain', age);
+        }
+      })
+
+    })
   });
 
 });
