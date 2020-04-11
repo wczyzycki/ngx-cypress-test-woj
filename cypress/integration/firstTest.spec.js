@@ -267,7 +267,7 @@ describe('Our first suite', () => {
 
   it('Datepicker dynamic date', () => {
 
-     const selectDayFromCurrent = day => {
+    const selectDayFromCurrent = day => {
       let date = new Date();
       date.setDate((date.getDate() + day));
 
@@ -301,5 +301,40 @@ describe('Our first suite', () => {
 
   });
 
+  describe('Tooltips and modal', () => {
+    it('Tooltip', () => {
+      cy.visit('/');
+      cy.contains('Modal & Overlays').click();
+      cy.contains('Tooltip').click();
+
+      cy.contains('nb-card', 'Colored Tooltips')
+        .contains('Default').click();
+      cy.get('nb-tooltip').should('contain', 'This is a tooltip')
+    });
+
+    it('Dialog box - Alert', () => {
+      cy.visit('/');
+      cy.contains('Tables & Data').click();
+      cy.contains('Smart Table').click();
+
+      //1 -- poor way - doesn't work if alert is not appear
+      // cy.get('tbody tr').first().find('.nb-trash').click();
+      // cy.on('window:confirmed', (confirm) => {
+      //   expect(confirm).to.equal("Are you sure you want to delete?")
+      // })
+
+      //2 - right way
+      const stub = cy.stub()
+      cy.on('window:confirmed', stub);
+      cy.get('tbody tr').first().find('.nb-trash').click().then(() => {
+        expect(stub.getCall(0)).to.be.calledWith('Are you sure you want to delete?')
+      });
+
+      //3 - cancel alert
+      cy.get('tbody tr').first().find('.nb-trash').click()
+      cy.on('window:confirmed', () => false);
+
+    });
+  });
 });
 
