@@ -93,11 +93,16 @@ describe('Our first suite', () => {
     cy.contains('Form Layouts').click();
 
     //1
-    cy.get('[for="exampleInputEmail1"]').should('contain', 'Email');
+    cy.get('[for="exampleInputEmail1"]')
+      .should('contain', 'Email')
+      .should('have.class', 'label')
+      .and('have.text', 'Email address')
 
     //2
     cy.get('[for="exampleInputEmail1"]').then(label => {
       expect(label.text()).to.equal('Email address');
+      expect(label).to.have.class('label')
+      expect(label).to.have.text('Email address')
     });
 
     //3 -> invoke
@@ -128,6 +133,7 @@ describe('Our first suite', () => {
         cy.wrap(input).click();
         cy.get('nb-calendar-day-picker').contains('17').click();
         cy.wrap(input).invoke('prop', 'value').should('contain', 'Apr 17, 2020');
+        cy.wrap(input).should('have.value', 'Apr 17, 2020');
       });
 
   });
@@ -297,6 +303,7 @@ describe('Our first suite', () => {
       cy.wrap(input).click();
       let dayAssert = selectDayFromCurrent(25);
       cy.wrap(input).invoke('prop', 'value').should('contain', dayAssert);
+      cy.wrap(input).should('have.value', dayAssert);
     });
 
   });
